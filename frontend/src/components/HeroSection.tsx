@@ -12,8 +12,6 @@ import {
   Layers,
   Mail,
   Heart,
-  Sparkles,
-  Terminal,
 } from 'lucide-react'
 
 const VIDEO_URL =
@@ -405,66 +403,19 @@ export default function HeroSection({
             schedules, and automate workflows.
           </motion.p>
 
-          {/* Interactive AI Agent Launchpad (Replaced Mail Box with Cooler UI/UX) */}
-          <motion.div variants={fadeUp} className="max-w-2xl w-full px-4 mb-10">
-            <div className="liquid-glass rounded-3xl p-3 sm:p-4 border border-violet-500/30 shadow-2xl shadow-violet-500/10 relative overflow-hidden group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 rounded-3xl blur-xl opacity-25 group-hover:opacity-45 transition duration-500" />
-              
-              <div className="relative flex flex-col sm:flex-row items-center justify-between gap-3 bg-black/60 rounded-2xl p-3 border border-white/10">
-                <div className="flex items-center gap-3 w-full sm:w-auto pl-1">
-                  <div className="w-10 h-10 rounded-xl bg-violet-500/20 border border-violet-500/40 flex items-center justify-center flex-shrink-0 text-violet-300 animate-pulse">
-                    <Terminal size={20} />
-                  </div>
-                  <div className="flex flex-col min-w-0 text-left">
-                    <span className="text-xs sm:text-sm font-semibold text-white truncate flex items-center gap-1.5">
-                      <span>Autonomous AI Agent Command Bar</span>
-                      <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded font-mono">v3.0</span>
-                    </span>
-                    <span className="text-[11px] text-white/50 font-mono truncate">
-                      Powered by Google ADK • 10 MCP Tools Active
-                    </span>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={onEnterWorkspace}
-                  className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all shadow-lg shadow-violet-600/30 flex items-center justify-center gap-2 flex-shrink-0 active:scale-95"
-                >
-                  <span>Launch OS</span>
-                  <ArrowRight size={15} />
-                </button>
-              </div>
-
-              {/* Interactive Quick-Prompt Pills */}
-              <div className="relative mt-3 pt-2 border-t border-white/[0.06] flex flex-wrap items-center justify-center gap-2">
-                <span className="text-[11px] text-white/40 font-mono flex items-center gap-1 mr-1">
-                  <Sparkles size={12} className="text-amber-400" />
-                  Try Autonomous Task:
-                </span>
-                {[
-                  { label: '📚 Study Planner', prompt: 'Create study schedule & revision quiz' },
-                  { label: '⚡ Kanban Audit', prompt: 'Optimize task deadlines & priorities' },
-                  { label: '🧠 Project Roadmap', prompt: 'Plan TaskForge AI milestones' },
-                ].map((item, idx) => (
-                  <button
-                    key={idx}
-                    onClick={onEnterWorkspace}
-                    className="px-3 py-1 rounded-full bg-white/[0.04] hover:bg-violet-500/20 border border-white/10 hover:border-violet-500/40 text-white/70 hover:text-white text-[11px] font-medium transition-all duration-200 flex items-center gap-1 hover:scale-105 active:scale-95"
-                  >
-                    <span>{item.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
           {/* CTA Buttons */}
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-            <button onClick={onEnterWorkspace} className="bg-white text-black rounded-full px-8 py-3 text-sm font-semibold hover:bg-white/90 transition-colors flex items-center gap-2">
-              Get Started Free
-              <ArrowRight size={16} />
+          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 mt-2">
+            <button
+              onClick={onEnterWorkspace}
+              className="group relative inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-white via-violet-100 to-white px-8 py-3.5 text-sm font-bold text-black shadow-xl shadow-white/10 hover:shadow-violet-500/30 hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              <span>Get Started Free</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform text-violet-600 font-bold" />
             </button>
-            <button className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/5 transition-colors">
+            <button
+              onClick={() => document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' })}
+              className="liquid-glass rounded-full px-8 py-3.5 text-white/90 hover:text-white text-sm font-semibold hover:bg-white/10 hover:border-white/30 transition-all duration-300 hover:scale-105 active:scale-95"
+            >
               View Architecture
             </button>
           </motion.div>
