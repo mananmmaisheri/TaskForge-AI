@@ -16,11 +16,13 @@ import {
   Clock,
   Zap,
   Settings as SettingsIcon,
+  CheckCircle2,
 } from 'lucide-react'
 
 import { ChatSidebar, type ChatSessionItem } from './ChatSidebar'
 import { CommandPalette } from './CommandPalette'
 import { SettingsModal } from './SettingsModal'
+import { TodoAlarmsModal } from './TodoAlarmsModal'
 import { AgentActivityPanel, type AgentActivityItem } from './AgentActivityPanel'
 import { MarkdownRenderer } from './MarkdownRenderer'
 
@@ -53,55 +55,47 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
   const [isCommandOpen, setIsCommandOpen] = useState(false)
 
   // Sessions and active session
-  const [sessions, setSessions] = useState<ChatSessionItem[]>([
-    { id: 'sess_1', title: 'Plan AI Multi-Agent Architecture', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: 'sess_2', title: 'Study Schedule & ML Exam Preparation', created_at: new Date(Date.now() - 86400000).toISOString(), updated_at: new Date(Date.now() - 86400000).toISOString() },
-    { id: 'sess_3', title: 'Kanban Task Prioritization Audit', created_at: new Date(Date.now() - 3 * 86400000).toISOString(), updated_at: new Date(Date.now() - 3 * 86400000).toISOString() },
-  ])
-  const [activeSessionId, setActiveSessionId] = useState<string | null>('sess_1')
+  const [sessions, setSessions] = useState<ChatSessionItem[]>(() => {
+    const saved = localStorage.getItem('taskforge_saved_sessions')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      } catch (e) {}
+    }
+    return [
+      {
+        id: `sess_${Date.now()}`,
+        title: 'New Conversation',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ]
+  })
+
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(() => {
+    const saved = localStorage.getItem('taskforge_saved_sessions')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0].id
+      } catch (e) {}
+    }
+    return 'sess_init'
+  })
 
   // Messages in active session
-  const [messages, setMessages] = useState<ChatMessageItem[]>([
-    {
-      id: 'msg_1',
-      role: 'user',
-      content: 'Plan my project roadmap and decompose goals into milestones for TaskForge AI.',
-      timestamp: new Date(Date.now() - 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    },
-    {
-      id: 'msg_2',
-      role: 'assistant',
-      content: `### 🚀 TaskForge AI — Strategic Roadmap Report
-
-I have coordinated **2 specialized AI agents** (\`Planner Agent\`, \`Task Manager Agent\`) to structure your project:
-
-#### 🧠 Planner Agent
-**Strategic Roadmap Generated**:
-1. *Foundation & Discovery* (Milestone: Architecture Blueprint Approval)
-2. *Core Development & MVP* (Milestone: Core Functional Pipeline)
-3. *Optimization & QA* (Milestone: End-to-End Test Suite & Benchmarks)
-
-#### ✅ Task Manager Agent
-**Workflow Optimized & Tasks Configured**:
-• [HIGH] Execute Phase 1: Architecture Blueprint Approval
-• [MEDIUM] Execute Phase 2: Core Functional Pipeline
-• [MEDIUM] Execute Phase 3: End-to-End Test Suite & Benchmarks
-
----
-*💡 All intermediate results have been synchronized to your long-term workspace memory.*`,
-      timestamp: new Date(Date.now() - 30000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      activities: [
-        { name: 'Planner Agent', emoji: '🧠', status: 'completed' },
-        { name: 'Task Manager Agent', emoji: '✅', status: 'completed' },
-      ],
-      suggestedPrompts: [
-        'Optimize my task deadlines and priority queue',
-        'Generate an interactive quiz for this study curriculum',
-        'Schedule a follow-up review meeting tomorrow at 4 PM',
-        'Analyze my productivity insights for the week',
-      ],
-    },
-  ])
+  const [messages, setMessages] = useState<ChatMessageItem[]>(() => {
+    const savedSessionId = activeSessionId || 'sess_init'
+    const saved = localStorage.getItem(`taskforge_msgs_${savedSessionId}`)
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) return parsed
+      } catch (e) {}
+    }
+    return []
+  })
 
   // Input & Generation state
   const [input, setInput] = useState('')
@@ -110,6 +104,7 @@ I have coordinated **2 specialized AI agents** (\`Planner Agent\`, \`Task Manage
   const [streamingText, setStreamingText] = useState('')
   const [attachments, setAttachments] = useState<Array<{ name: string; type: 'file' | 'image'; size?: string; previewUrl?: string; content?: string }>>([])
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isTodoOpen, setIsTodoOpen] = useState(false)
 
   // Refs for auto-scroll and aborting stream
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
@@ -136,15 +131,49 @@ I have coordinated **2 specialized AI agents** (\`Planner Agent\`, \`Task Manage
           if (data && Array.isArray(data) && data.length > 0) {
             setSessions(data)
             setActiveSessionId(data[0].id)
+            localStorage.setItem('taskforge_saved_sessions', JSON.stringify(data))
           }
         })
         .catch((err) => console.error('Failed to load DB sessions:', err))
     }
   }, [token])
 
+  // Persist sessions automatically
+  useEffect(() => {
+    if (sessions.length > 0) {
+      localStorage.setItem('taskforge_saved_sessions', JSON.stringify(sessions))
+    }
+  }, [sessions])
+
+  // Persist messages automatically
+  useEffect(() => {
+    if (activeSessionId) {
+      localStorage.setItem(`taskforge_msgs_${activeSessionId}`, JSON.stringify(messages))
+    }
+  }, [messages, activeSessionId])
+
   // Handle session switching
   const handleSelectSession = (id: string) => {
     setActiveSessionId(id)
+
+    // Load instantly from localStorage first
+    const savedMsgs = localStorage.getItem(`taskforge_msgs_${id}`)
+    if (savedMsgs) {
+      try {
+        const parsed = JSON.parse(savedMsgs)
+        if (Array.isArray(parsed)) {
+          setMessages(parsed)
+        } else {
+          setMessages([])
+        }
+      } catch (e) {
+        setMessages([])
+      }
+    } else {
+      setMessages([])
+    }
+
+    // Sync with backend database if authenticated
     if (token && !token.startsWith('guest_')) {
       fetch(`http://localhost:8000/api/chat/sessions/${id}/messages`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -162,79 +191,11 @@ I have coordinated **2 specialized AI agents** (\`Planner Agent\`, \`Task Manage
             }))
             if (formatted.length > 0) {
               setMessages(formatted)
-              return
+              localStorage.setItem(`taskforge_msgs_${id}`, JSON.stringify(formatted))
             }
           }
         })
-        .catch((err) => console.error('Failed to load session messages:', err))
-    }
-
-    const found = sessions.find((s) => s.id === id)
-    if (found && found.title.includes('Study')) {
-      setMessages([
-        {
-          id: 'msg_s1',
-          role: 'user',
-          content: 'Create my study schedule and generate an interactive revision quiz.',
-          timestamp: '10:15 AM',
-        },
-        {
-          id: 'msg_s2',
-          role: 'assistant',
-          content: `### 📚 Study & Exam Curriculum
-I deployed the **Study Agent** and **Scheduler Agent** to organize your curriculum:
-• **Session 1**: Multi-Agent Orchestration & ADK Patterns (45 mins)
-• **Session 2**: Model Context Protocol (MCP) Tool Registries (60 mins)
-• **Session 3**: Distributed Memory Systems & Redis Caching (30 mins)
-
-💡 *Sample Quiz*: What is the primary benefit of MCP? → **Standardized secure tool execution**.`,
-          timestamp: '10:16 AM',
-          activities: [
-            { name: 'Study Agent', emoji: '📚', status: 'completed' },
-            { name: 'Scheduler Agent', emoji: '📅', status: 'completed' },
-          ],
-        },
-      ])
-    } else if (found && found.title.includes('Kanban')) {
-      setMessages([
-        {
-          id: 'msg_k1',
-          role: 'user',
-          content: 'Optimize my task deadlines and recommend priority order.',
-          timestamp: '04:30 PM',
-        },
-        {
-          id: 'msg_k2',
-          role: 'assistant',
-          content: `### ⚡ Task Optimization Report
-**Task Manager Agent** analyzed your pending queue:
-1. Prioritize tasks tagged 'high' scheduled before Friday.
-2. Move 2 low-priority administrative tasks to next week.
-
-All Kanban columns have been reordered automatically!`,
-          timestamp: '04:31 PM',
-          activities: [{ name: 'Task Manager Agent', emoji: '✅', status: 'completed' }],
-        },
-      ])
-    } else {
-      setMessages([
-        {
-          id: 'msg_1',
-          role: 'user',
-          content: 'Plan my project roadmap and decompose goals into milestones for TaskForge AI.',
-          timestamp: '11:00 AM',
-        },
-        {
-          id: 'msg_2',
-          role: 'assistant',
-          content: `### 🚀 TaskForge AI — Strategic Roadmap Report\nI have coordinated **2 specialized AI agents** (\`Planner Agent\`, \`Task Manager Agent\`) to structure your project.`,
-          timestamp: '11:01 AM',
-          activities: [
-            { name: 'Planner Agent', emoji: '🧠', status: 'completed' },
-            { name: 'Task Manager Agent', emoji: '✅', status: 'completed' },
-          ],
-        },
-      ])
+        .catch((err) => console.error('Failed to load DB session messages:', err))
     }
   }
 
@@ -551,6 +512,7 @@ All Kanban columns have been reordered automatically!`,
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         onBackToLanding={onBackToLanding}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenTodo={() => setIsTodoOpen(true)}
         user={user}
         onSignOut={onSignOut}
         onOpenLogin={onOpenLogin}
@@ -584,7 +546,16 @@ All Kanban columns have been reordered automatically!`,
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <button
+              onClick={() => setIsTodoOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-violet-600/20 to-indigo-600/20 hover:from-violet-600/30 hover:to-indigo-600/30 border border-violet-500/30 text-violet-300 hover:text-white text-xs font-semibold transition-all shadow-sm group"
+              title="Open AI Task Manager & Alarms"
+            >
+              <CheckCircle2 size={14} className="text-violet-400 group-hover:scale-110 transition-transform" />
+              <span>Tasks & Alarms</span>
+            </button>
+
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-white/70 hover:text-white text-xs font-medium transition-all"
@@ -900,6 +871,13 @@ All Kanban columns have been reordered automatically!`,
           isOpen={isSettingsOpen}
           onClose={() => setIsSettingsOpen(false)}
           onClearHistory={() => setMessages([])}
+        />
+
+        {/* AI Task Manager & Working Alarms Modal */}
+        <TodoAlarmsModal
+          isOpen={isTodoOpen}
+          onClose={() => setIsTodoOpen(false)}
+          onAskAI={(p) => handleSendMessage(p)}
         />
       </main>
     </div>

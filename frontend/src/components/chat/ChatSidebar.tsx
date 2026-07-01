@@ -9,6 +9,7 @@ import {
   Database,
   LogOut,
   LogIn,
+  CheckCircle2,
 } from 'lucide-react'
 
 export interface ChatSessionItem {
@@ -28,6 +29,7 @@ interface ChatSidebarProps {
   onToggle: () => void
   onBackToLanding: () => void
   onOpenSettings?: () => void
+  onOpenTodo?: () => void
   user?: any
   onSignOut?: () => void
   onOpenLogin?: () => void
@@ -42,6 +44,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   isOpen,
   onBackToLanding,
   onOpenSettings,
+  onOpenTodo,
   user,
   onSignOut,
   onOpenLogin,
@@ -178,6 +181,16 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
       {/* Bottom Profile & Status */}
       <div className="pt-4 border-t border-white/[0.08] space-y-2">
+        <div onClick={onOpenTodo} className="flex items-center justify-between px-3 py-2 rounded-xl bg-gradient-to-r from-violet-600/10 to-indigo-600/10 border border-violet-500/20 hover:from-violet-600/20 hover:to-indigo-600/20 transition-all cursor-pointer group shadow-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={14} className="text-violet-400 group-hover:scale-110 transition-transform" />
+            <span className="text-xs text-violet-200 group-hover:text-white font-semibold">Tasks & Alarms</span>
+          </div>
+          <span className="text-[10px] font-mono text-violet-300 bg-violet-500/20 px-2 py-0.5 rounded-full border border-violet-500/30 animate-pulse">
+            Live
+          </span>
+        </div>
+
         <div onClick={onOpenSettings} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-colors cursor-pointer group">
           <div className="flex items-center gap-2">
             <Database size={14} className="text-cyan-400 group-hover:scale-110 transition-transform" />
