@@ -1,6 +1,7 @@
 # 🚀 TaskForge AI — Production AI Operating System & Multi-Agent Workspace
+<img width="1920" height="1035" alt="image" src="https://github.com/user-attachments/assets/94e4471f-0c1f-4ae3-982d-73477872417d" />
+<img width="1920" height="1035" alt="image" src="https://github.com/user-attachments/assets/a04c9eb4-78c3-4eb3-adc3-f43518c9c17e" />
 
-![TaskForge AI Banner](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1920)
 
 **TaskForge AI** is an intelligent full-stack AI Operating System that combines multiple specialized AI agents into one unified workspace. It helps users plan goals, optimize tasks, manage schedules, organize studies, and automate daily workflows using **Google's Agent Development Kit (ADK) Multi-Agent Framework** and a **Model Context Protocol (MCP) Server Architecture**.
 
