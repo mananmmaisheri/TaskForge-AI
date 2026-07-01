@@ -215,7 +215,17 @@ const navVariants: Variants = {
 /* ═══════════════════════════════════════════════════════
    Hero Section Component
    ═══════════════════════════════════════════════════════ */
-export default function HeroSection({ onEnterWorkspace }: { onEnterWorkspace?: () => void }) {
+export default function HeroSection({
+  onEnterWorkspace,
+  onOpenLogin,
+  onOpenRegister,
+  user,
+}: {
+  onEnterWorkspace?: () => void
+  onOpenLogin?: () => void
+  onOpenRegister?: () => void
+  user?: any
+}) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   useVideoFade(videoRef)
 
@@ -315,12 +325,35 @@ export default function HeroSection({ onEnterWorkspace }: { onEnterWorkspace?: (
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <button onClick={onEnterWorkspace} className="text-white/80 hover:text-white transition-colors text-sm font-medium hidden sm:block">
-                Sign Up
-              </button>
-              <button onClick={onEnterWorkspace} className="liquid-glass rounded-full px-5 sm:px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors">
-                Login
-              </button>
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/15 text-xs font-medium text-white/90 shadow-sm">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>{user.full_name || user.email?.split('@')[0]}</span>
+                  </div>
+                  <button
+                    onClick={onEnterWorkspace}
+                    className="liquid-glass rounded-full px-5 sm:px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors shadow-lg shadow-violet-500/20"
+                  >
+                    Go to Workspace
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={onOpenRegister || onEnterWorkspace}
+                    className="text-white/80 hover:text-white transition-colors text-sm font-medium hidden sm:block"
+                  >
+                    Sign Up
+                  </button>
+                  <button
+                    onClick={onOpenLogin || onEnterWorkspace}
+                    className="liquid-glass rounded-full px-5 sm:px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors shadow-lg shadow-violet-500/20"
+                  >
+                    Login
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </motion.nav>

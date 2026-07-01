@@ -35,9 +35,19 @@ export interface ChatMessageItem {
 
 interface ChatWorkspaceProps {
   onBackToLanding: () => void
+  user?: any
+  token?: string | null
+  onSignOut?: () => void
+  onOpenLogin?: () => void
 }
 
-export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({ onBackToLanding }) => {
+export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
+  onBackToLanding,
+  user,
+  token,
+  onSignOut,
+  onOpenLogin,
+}) => {
   // State for sidebar and command palette
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
@@ -115,9 +125,50 @@ I have coordinated **2 specialized AI agents** (\`Planner Agent\`, \`Task Manage
     scrollToBottom()
   }, [messages, streamingText, currentActivities])
 
+  // Fetch real database sessions when authenticated
+  useEffect(() => {
+    if (token && !token.startsWith('guest_')) {
+      fetch('http://localhost:8000/api/chat/sessions', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data && Array.isArray(data) && data.length > 0) {
+            setSessions(data)
+            setActiveSessionId(data[0].id)
+          }
+        })
+        .catch((err) => console.error('Failed to load DB sessions:', err))
+    }
+  }, [token])
+
   // Handle session switching
   const handleSelectSession = (id: string) => {
     setActiveSessionId(id)
+    if (token && !token.startsWith('guest_')) {
+      fetch(`http://localhost:8000/api/chat/sessions/${id}/messages`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data && Array.isArray(data)) {
+            const formatted: ChatMessageItem[] = data.map((m: any) => ({
+              id: m.id,
+              role: m.role === 'assistant' ? 'assistant' : m.role === 'system' ? 'system' : 'user',
+              content: m.content,
+              timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              activities: m.agent_metadata?.activities,
+              suggestedPrompts: m.agent_metadata?.suggestedPrompts,
+            }))
+            if (formatted.length > 0) {
+              setMessages(formatted)
+              return
+            }
+          }
+        })
+        .catch((err) => console.error('Failed to load session messages:', err))
+    }
+
     const found = sessions.find((s) => s.id === id)
     if (found && found.title.includes('Study')) {
       setMessages([
@@ -258,10 +309,17 @@ All Kanban columns have been reordered automatically!`,
 
     // Try live SSE backend connection first; fallback to simulated orchestrator if offline
     try {
+      const reqHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (token && !token.startsWith('guest_')) {
+        reqHeaders['Authorization'] = `Bearer ${token}`
+      }
       const resp = await fetch('http://localhost:8000/api/chat/stream', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: textToSend, session_id: activeSessionId }),
+        headers: reqHeaders,
+        body: JSON.stringify({
+          message: textToSend,
+          session_id: activeSessionId?.startsWith('sess_') ? undefined : activeSessionId,
+        }),
         signal: abortControllerRef.current.signal,
       })
 
@@ -493,6 +551,9 @@ All Kanban columns have been reordered automatically!`,
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         onBackToLanding={onBackToLanding}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        user={user}
+        onSignOut={onSignOut}
+        onOpenLogin={onOpenLogin}
       />
 
       {/* Main Chat Area */}

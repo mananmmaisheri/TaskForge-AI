@@ -4,10 +4,11 @@ import {
   MessageSquare,
   Plus,
   Trash2,
-  Settings,
-  Sparkles,
   ChevronRight,
+  Sparkles,
   Database,
+  LogOut,
+  LogIn,
 } from 'lucide-react'
 
 export interface ChatSessionItem {
@@ -27,6 +28,9 @@ interface ChatSidebarProps {
   onToggle: () => void
   onBackToLanding: () => void
   onOpenSettings?: () => void
+  user?: any
+  onSignOut?: () => void
+  onOpenLogin?: () => void
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({
@@ -38,6 +42,9 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   isOpen,
   onBackToLanding,
   onOpenSettings,
+  user,
+  onSignOut,
+  onOpenLogin,
 }) => {
   if (!isOpen) return null
 
@@ -181,18 +188,47 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
           </span>
         </div>
 
-        <div onClick={onOpenSettings} className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors cursor-pointer group">
-          <div className="flex items-center gap-2.5">
-            <img src="/logo.jpg" alt="TF" className="w-8 h-8 rounded-full object-cover border border-white/20 shadow-sm" />
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-white group-hover:text-violet-300 transition-colors">
-                Manan Pro Engineer
-              </span>
-              <span className="text-[10px] text-white/40 font-mono">Enterprise Tier</span>
+        {user ? (
+          <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 transition-colors group">
+            <div onClick={onOpenSettings} className="flex items-center gap-2.5 cursor-pointer flex-1 overflow-hidden">
+              <img src={user.avatar_url || '/logo.jpg'} alt="User" className="w-8 h-8 rounded-full object-cover border border-violet-500/40 shadow-sm flex-shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-semibold text-white truncate group-hover:text-violet-300 transition-colors">
+                  {user.full_name || user.email?.split('@')[0] || 'Authenticated User'}
+                </span>
+                <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Synchronized
+                </span>
+              </div>
             </div>
+            <button
+              onClick={onSignOut}
+              title="Sign Out"
+              className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 hover:text-red-400 transition-all flex-shrink-0 ml-1"
+            >
+              <LogOut size={15} />
+            </button>
           </div>
-          <Settings size={15} className="text-white/30 group-hover:text-white transition-colors" />
-        </div>
+        ) : (
+          <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] transition-colors">
+            <div onClick={onOpenSettings} className="flex items-center gap-2.5 cursor-pointer flex-1">
+              <img src="/logo.jpg" alt="TF" className="w-8 h-8 rounded-full object-cover border border-white/20 shadow-sm opacity-70" />
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-white/80">Guest Workforce</span>
+                <span className="text-[10px] text-white/40 font-mono">Local Demo Tier</span>
+              </div>
+            </div>
+            <button
+              onClick={onOpenLogin}
+              title="Sign In to Save Chats"
+              className="px-2.5 py-1 rounded-lg bg-violet-600/20 hover:bg-violet-600/30 border border-violet-500/30 text-violet-300 text-xs font-medium flex items-center gap-1 transition-all"
+            >
+              <LogIn size={13} />
+              <span>Sign In</span>
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   )
