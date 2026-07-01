@@ -223,7 +223,9 @@ cd frontend
 npm install
 npm run dev -- --port 3000
 ```
-Open your browser at **http://localhost:3000** to experience TaskForge AI!
+Open your browser at **http://localhost:3000** to experience TaskForge AI!\
+
+Deployed LINK - **https://task-forge-ai-gules.vercel.app/**
 
 ---
 
