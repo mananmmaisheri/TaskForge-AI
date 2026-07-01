@@ -1,0 +1,43 @@
+# ============================================
+# TaskForge AI — Docker Ignore & Security Policy
+# ============================================
+# Prevents sensitive environment variables and secrets from being copied into Docker build layers
+
+# ── 1. ENVIRONMENT & SECRETS (NEVER COPY INTO DOCKER LAYERS) ──
+.env
+.env.*
+!.env.example
+*.env
+*.key
+*.pem
+*.cert
+secrets.json
+credentials.json
+jwt-secret.txt
+
+# ── 2. DEPENDENCIES & BUILD CACHES ──
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/venv
+**/.venv
+**/env
+**/dist
+**/build
+**/.next
+
+# ── 3. VERSION CONTROL & OS ARTIFACTS ──
+.git
+.gitignore
+.dockerignore
+.DS_Store
+*.log
+logs/
+.vscode/
+.idea/
+.gemini/
+antigravity-ide/
+*.md
+!.env.example

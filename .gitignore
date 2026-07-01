@@ -1,0 +1,137 @@
+# ============================================
+# TaskForge AI — Root Git Ignore & Security Policy
+# ============================================
+
+# ── 1. ENVIRONMENT VARIABLES & SECRETS (CRITICAL) ──
+# Explicitly block all environment and secret files from version control
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+*.env
+*.env.*
+!.env.example
+
+# Private keys, certificates, and credentials
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+secrets.json
+credentials.json
+service-account*.json
+jwt-secret.txt
+
+# ── 2. PYTHON / BACKEND ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env_venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing & Linting
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+.hypothesis/
+test-reports/
+
+# ── 3. NODE.JS / FRONTEND ──
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+dist/
+dist-ssr/
+build/
+out/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+
+# ── 4. LOGS & DATABASES ──
+*.log
+logs/
+log/
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+dump.rdb
+taskforge.db
+*.bak
+
+# ── 5. OS & EDITOR ARTIFACTS ──
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.tmp
+*.bak
+*~
+
+# ── 6. AGENT & IDE LOCAL CACHES ──
+.gemini/
+antigravity-ide/
+.antigravity/
+.tempmediaStorage/
+scratch/
+.system_generated/

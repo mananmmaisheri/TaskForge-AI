@@ -1,0 +1,19 @@
+# ── ENVIRONMENT & SECRETS ──
+.env
+.env.*
+*.key
+*.pem
+secrets.json
+credentials.json
+
+# ── CACHES & ENVIRONMENTS ──
+__pycache__
+.pytest_cache
+.mypy_cache
+venv
+.venv
+env
+*.pyc
+*.log
+.git
+.gitignore

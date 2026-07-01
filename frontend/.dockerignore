@@ -1,0 +1,15 @@
+# ── ENVIRONMENT & SECRETS ──
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets.json
+
+# ── DEPENDENCIES & BUILD ──
+node_modules
+dist
+dist-ssr
+*.log
+.git
+.gitignore

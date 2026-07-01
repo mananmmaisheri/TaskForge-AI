@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # ── PostgreSQL Database ────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskforge_postgres
+    environment:
+      POSTGRES_USER: taskforge
+      POSTGRES_PASSWORD: taskforge_secret_password
+      POSTGRES_DB: taskforge_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskforge -d taskforge_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taskforge_network
+
+  # ── Redis Memory Cache ─────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: taskforge_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - taskforge_network
+
+  # ── FastAPI Backend Engine & ADK Orchestrator ──────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taskforge_backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://taskforge:taskforge_secret_password@postgres:5432/taskforge_db
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: super_secret_jwt_key_taskforge_ai_2026_enterprise_edition
+      ACCESS_TOKEN_EXPIRE_MINUTES: 10080
+      ENVIRONMENT: production
+      CORS_ORIGINS: "http://localhost:3000,http://localhost:80,http://frontend:3000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - taskforge_network
+    restart: always
+
+  # ── Vite React Frontend Workspace ──────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: taskforge_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - taskforge_network
+    restart: always
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  taskforge_network:
+    driver: bridge

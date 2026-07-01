@@ -1,0 +1,36 @@
+# ── ENVIRONMENT VARIABLES & SECRETS ──
+.env
+.env.local
+.env.*
+*.env
+*.key
+*.pem
+secrets.json
+credentials.json
+jwt_secret.key
+
+# ── PYTHON ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── VIRTUAL ENVIRONMENTS ──
+venv/
+.venv/
+env/
+ENV/
+
+# ── TESTING & LOGS ──
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+logs/
+*.db
+*.sqlite3
+dump.rdb
