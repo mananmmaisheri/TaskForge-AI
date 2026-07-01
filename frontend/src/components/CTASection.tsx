@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 
 export default function CTASection() {
   return (
@@ -29,18 +29,31 @@ export default function CTASection() {
             future of AI-powered productivity.
           </p>
 
-          {/* CTA email bar */}
-          <div className="max-w-lg mx-auto mb-8">
-            <div className="liquid-glass rounded-full pl-5 sm:pl-6 pr-2 py-2 flex items-center gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40 text-sm sm:text-base min-w-0"
-              />
-              <button className="bg-white rounded-full px-5 sm:px-6 py-3 text-black text-sm font-semibold hover:bg-white/90 transition-colors flex items-center gap-2 flex-shrink-0">
-                Join Waitlist
-                <ArrowRight size={16} />
-              </button>
+          {/* Replaced email bar with Cooler Interactive Launch Hub */}
+          <div className="max-w-xl mx-auto mb-10">
+            <div className="liquid-glass rounded-3xl p-4 sm:p-6 border border-violet-500/30 relative overflow-hidden group shadow-2xl shadow-violet-500/10">
+              <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition duration-500" />
+              <div className="relative flex flex-col sm:flex-row items-center justify-between gap-4 bg-black/60 rounded-2xl p-4 border border-white/10">
+                <div className="flex items-center gap-3.5 text-left w-full sm:w-auto">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/30 flex-shrink-0 animate-pulse">
+                    <Sparkles size={24} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-white font-bold text-sm sm:text-base">Experience TaskForge 3.0</span>
+                    <span className="text-emerald-400 text-xs font-mono flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      10 Autonomous Agents Live
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl px-6 py-3 text-sm font-bold transition-all shadow-xl shadow-violet-600/30 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 flex-shrink-0"
+                >
+                  <span>Enter Workspace</span>
+                  <ArrowRight size={16} />
+                </button>
+              </div>
             </div>
           </div>
 
