@@ -16,22 +16,22 @@ The application is engineered with an award-quality aesthetic comparable to *Lin
                   ┌─────────────────────────────────────────────────────────┐
                   │                 REACT 18 FRONTEND                       │
                   │   • Award-Quality Dark Cinematic Landing Page           │
-                  │   • Unified ChatGPT/Claude Style AI Chat Workspace       │
+                  │   • Unified ChatGPT/Claude Style AI Chat Workspace      │
                   │   • Live Agent Activity Progress & Markdown Engine      │
                   └───────────────────────────┬─────────────────────────────┘
                                               │ HTTP / SSE / WebSocket
                                               ▼
                   ┌─────────────────────────────────────────────────────────┐
                   │                 FASTAPI ASYNC BACKEND                   │
-                  │   • JWT Auth, Rate Limiting (SlowAPI), CORS, Security    │
-                  │   • Real-Time Server-Sent Events (/api/chat/stream)      │
+                  │   • JWT Auth, Rate Limiting (SlowAPI), CORS, Security   │
+                  │   • Real-Time Server-Sent Events (/api/chat/stream)     │
                   └──────┬────────────────────┬──────────────────────┬──────┘
                          │                    │                      │
          ┌───────────────▼───────────┐ ┌──────▼────────────────┐ ┌───▼──────────────────────┐
-         │  GOOGLE ADK ORCHESTRATOR  │ │  MCP TOOL REGISTRY    │ │  DISTRIBUTED MEMORY     │
-         │  • Root Intent Router     │ │  • FastMCP Sandboxed  │ │  • PostgreSQL (pgvector)│
-         │  • 7 Specialized Agents   │ │  • 10 Production Tools│ │  • Redis Caching Layer  │
-         │  • Shared Blackboard Mem  │ │  • AST Math & Safety  │ │  • User Profile & Context │
+         │  GOOGLE ADK ORCHESTRATOR  │ │  MCP TOOL REGISTRY    │ │  DISTRIBUTED MEMORY      │
+         │  • Root Intent Router     │ │  • FastMCP Sandboxed  │ │  • PostgreSQL (pgvector) │
+         │  • 7 Specialized Agents   │ │  • 10 Production Tools│ │  • Redis Caching Layer   │
+         │  • Shared Blackboard Mem  │ │  • AST Math & Safety  │ │  • User Profile & Context│
          └───────────────────────────┘ └───────────────────────┘ └──────────────────────────┘
 ```
 
